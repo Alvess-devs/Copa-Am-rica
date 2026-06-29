@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Campeões da Copa América</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top, #263b66, #0f172a 45%);
+            color: white;
+        }
+
+        header {
+            padding: 35px 20px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: clamp(28px, 5vw, 45px);
+        }
+
+        header p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill, minmax(150px, 1fr));
+            gap: 14px;
+            max-width: 1500px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .year {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            background: #1e293b;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            transition:
+                transform 0.25s,
+                border-color 0.25s,
+                box-shadow 0.25s;
+        }
+
+        .year:hover {
+            transform: translateY(-5px);
+            border-color: #eab308;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .year img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.35s;
+        }
+
+        .year:hover img {
+            transform: scale(1.06);
+        }
+
+        .year::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.85),
+                    transparent 60%
+                );
+        }
+
+        .ano {
+            position: absolute;
+            z-index: 2;
+            right: 9px;
+            bottom: 9px;
+            left: 9px;
+            padding: 7px 9px;
+            border-radius: 7px;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+            backdrop-filter: blur(4px);
+        }
+
+        .sem-imagem {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            color: #94a3b8;
+            font-size: 13px;
+            text-align: center;
+            background:
+                linear-gradient(135deg, #1e293b, #334155);
+        }
+
+        .sem-imagem::before {
+            content: "Sem imagem";
+        }
+
+        @media (max-width: 500px) {
+            header {
+                padding-top: 25px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .year {
+                height: 165px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Campeões da Copa América</h1>
+
+        <p>
+            Uma viagem pela história de todos os campeões.
+        </p>
+    </header>
+
+    <main class="grid" id="album"></main>
+
+    <script>
+        const album = document.getElementById("album");
+
+        /*
+        Coloque manualmente aqui o ano
+        e o caminho da imagem.
+        */
+
+        const imagensPorAno = {
+            "0004": "img/0004campeao.jpg"
+
+            /*
+            Para adicionar outras imagens:
+
+            "0005": "img/0005campeao.jpg",
+            "0006": "img/0006campeao.png"
+            */
+        };
+
+        // Cria do ano 0001 até o ano 0301
+        const totalAnos = 301;
+
+        function formatarAno(numero) {
+            return String(numero).padStart(4, "0");
+        }
+
+        function criarCard(ano) {
+            const card = document.createElement("article");
+            card.className = "year";
+
+            const caminhoImagem = imagensPorAno[ano];
+
+            if (caminhoImagem) {
+                const imagem = document.createElement("img");
+
+                imagem.src = caminhoImagem;
+                imagem.alt =
+                    `Campeão da Copa América no ano ${ano}`;
+
+                imagem.loading = "lazy";
+
+                imagem.onerror = function () {
+                    imagem.remove();
+
+                    const aviso =
+                        document.createElement("div");
+
+                    aviso.className = "sem-imagem";
+
+                    card.insertBefore(
+                        aviso,
+                        card.firstChild
+                    );
+                };
+
+                card.appendChild(imagem);
+
+            } else {
+                const aviso =
+                    document.createElement("div");
+
+                aviso.className = "sem-imagem";
+
+                card.appendChild(aviso);
+            }
+
+            const textoAno =
+                document.createElement("span");
+
+            textoAno.className = "ano";
+            textoAno.textContent = `Ano ${ano}`;
+
+            card.appendChild(textoAno);
+
+            return card;
+        }
+
+        for (let i = 1; i <= totalAnos; i++) {
+            const ano = formatarAno(i);
+            const card = criarCard(ano);
+
+            album.appendChild(card);
+        }
+    </script>
+
+</body>
+
+</html>
+
